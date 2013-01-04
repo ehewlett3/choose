@@ -18,33 +18,57 @@ def addChoice(pageNum):
 		print i+1, page
 		i+=1
 	newChoicePage = 9999
-	while newChoicePage > i:
-		newChoicePage = input("...leads to page #: ")
-	if newChoicePage == i:
-		addPage()
+	print str(i+1)+" ADD NEW PAGE"
+	while newChoicePage > i+1:
+		try:
+			newChoicePage = input("...leads to page #: ")
+		except:
+			newChoicePage = 9999
+	if newChoicePage == i+1:
+		addPage(i+1)
 	choices.append([pageNum, newChoiceText, newChoicePage-1])
+	f=open("choices.dat","a")
+	f.write(str(pageNum)+"|"+newChoiceText+"|"+str(newChoicePage-1)+"\n")
+	f.close()
 
-def addPage():
+def addPage(newPageNum):
 	newPageText = raw_input("New page: ")
+	pages.append(newPageText)
+	f=open("pages.dat","a")
+	f.write(newPageText+"\n")
+	f.close()
 	
 def main():
 	pageNum = 0
 	while True:
+		if pageNum > len(pages) or pages == []:
+			addPage(len(pages))
 		currChoices=displayPage(pageNum)
 		yourChoice=99
 		while yourChoice > len(currChoices):
-			yourChoice=input("Choose now! ")
-		if yourChoice==0:
+			try:
+				yourChoice=input("Choose now! ")
+			except:
+				yourChoice=99
+		if yourChoice==0: # secret add choice option
 			addChoice(pageNum)
+		elif currChoices[yourChoice-1] >= len(pages): # if page doesn't exist...
+			addPage(len(pages))
 		else:
 			pageNum=currChoices[yourChoice-1]
 
-f = open("pages.dat") # read pages
-pages = f.readlines()
-f.close()
-f = open("choices.dat") # read choices
-choices = f.readlines()
-f.close()
+try:
+	f = open("pages.dat") # read pages
+	pages = f.readlines()
+	f.close()
+except IOError:
+	pages = []
+try:
+	f = open("choices.dat") # read choices
+	choices = f.readlines()
+	f.close()
+except IOError:
+	choices = []
 i = 0 # strip newlines from pages
 for page in pages:
 	if page[len(page)-1]=="\n":
