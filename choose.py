@@ -1,5 +1,8 @@
+import textwrap
+
 def displayPage(num):
-	print pages[num] # display page text
+	for line in textwrap.wrap(pages[num]): # display page text
+		print line
 	currChoices = []
 	i=0 # display choices
 	j=0
@@ -50,12 +53,22 @@ def main():
 				yourChoice=input("Choose now! ")
 			except:
 				yourChoice=99
+		print
 		if yourChoice==0: # secret add choice option
 			addChoice(pageNum)
+		elif yourChoice==-1: # secret go back option
+			if history == []:
+				pageNum = 0
+			else:
+				pageNum=history.pop()
 		elif currChoices[yourChoice-1] >= len(pages): # if page doesn't exist...
 			addPage(len(pages))
 		else:
+			history.append(pageNum)
 			pageNum=currChoices[yourChoice-1]
+
+# START PROGRAM
+# initialize data - read from files or create empty variables
 
 try:
 	f = open("pages.dat") # read pages
@@ -86,4 +99,6 @@ for choice in choices:
 		j+=1
 	i+=1
 
+history = []
+print
 main()
